@@ -1,90 +1,97 @@
-import comment from "../models/comment.js";
-import post from "../models/post.js";
+import Comment from "../models/Comment.js";
+import mongoose from "mongoose";
 
 
-//  Add Comment (Normal User)
- 
-export async function addComment(req, res, next) {
+
+// Add normal user comment
+
+export const addComment = async (req, res) => {
   try {
-    const { content } = req.body;
+    const comment = await Comment.create({
+      text: req.body.text,
+      postId: req.params.postId,   // must match route param
+      authorId: req.user._id,
+      isAdminReply: false,
+    });
+
+    res.status(201).json(comment);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to add comment" });
+  }
+};
+
+//
+// Admin reply to a post
+//
+export const adminReply = async (req, res) => {
+  try {
+    const { text } = req.body;
     const { postId } = req.params;
 
-    if (!content) {
-      return res.status(400).json({ message: "Comment content required" });
+    // Validate input
+    if (!text) {
+      return res.status(400).json({ message: "Reply text is required" });
     }
 
-    const post = await Post.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: "Invalid postId" });
+    }
+
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "Unauthorized user" });
     }
 
     const comment = await Comment.create({
-      content,
-      post: postId,
-      author: req.user._id
+      text,
+      postId,
+      authorId: req.user._id,
+      isAdminReply: true,
     });
 
-    res.status(201).json({
-      success: true,
-      comment
-    });
+    res.status(201).json(comment);
   } catch (error) {
-    next(error);
+    console.error("ADMIN REPLY ERROR ", error);
+    res.status(500).json({ message: "Failed to add admin reply" });
   }
-}
+};
 
-// admin reply
-export async function adminReply(req, res, next) {
+
+
+// Get all comments for a post
+
+export const getCommentsByPost = async (req, res) => {
   try {
-    const { content } = req.body;
-    const { postId } = req.params;
+    const comments = await Comment.find({ postId: req.params.postId })
+      .populate("authorId", "name role")
+      .sort({ createdAt: 1 });
 
-    if (!content) {
-      return res.status(400).json({ message: "Reply content required" });
-    }
-
-    if (req.user.role !== "admin") {
-      return res.status(403).json({ message: "Admin access required" });
-    }
-
-    const post = await Post.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-
-    const reply = await Comment.create({
-      content,
-      post: postId,
-      author: req.user._id,
-      isAdminReply: true
-    });
-
-    res.status(201).json({
-      success: true,
-      reply
-    });
+    res.json(comments);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: "Failed to fetch comments" });
   }
-}
+};
 
-// get comments via post
 
-export async function getCommentsByPost(req, res, next) {
+// Delete comment (owner or admin)
+
+export const deleteComment = async (req, res) => {
   try {
-    const { postId } = req.params;
+    const comment = await Comment.findById(req.params.id);
 
-    const comments = await Comment.find({ post: postId })
-      .populate("author", "name email role")
-      .sort({ isAdminReply: -1, createdAt: 1 }) // admin reply first
-      .lean();
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
 
-    res.status(200).json({
-      success: true,
-      count: comments.length,
-      comments
-    });
+    if (
+      comment.authorId.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ message: "Not authorized to delete" });
+    }
+
+    await comment.deleteOne();
+    res.json({ message: "Comment removed" });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: "Failed to delete comment" });
   }
-}
+};

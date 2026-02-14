@@ -1,4 +1,3 @@
-// src/routes/comment.routes.js
 import express from "express";
 import {
   addComment,
@@ -7,8 +6,8 @@ import {
   deleteComment
 } from "../controllers/commentcontroller.js";
 
-import { protect } from "../middleware/auth.middleware.js";
-import { authorize } from "../middleware/rolemiddleware.js";
+import { protect } from "../middleware/authMiddleware.js";
+import { authorize } from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
 router.post("/:postId", protect, addComment);
