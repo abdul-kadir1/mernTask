@@ -1,12 +1,12 @@
 import express from "express";
 import dotenv from "dotenv";
-import connectdb from "./src/config/db.js";
+import connectdb from "./config/db.js";
 import cors from "cors";
 
 // Routes
-import authRoutes from "./src/routes/authRoutes.js";
-import postRoutes from "./src/routes/postRoutes.js";
-import commentRoutes from "./src/routes/commentroute.js";
+import authRoutes from "./routes/authRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
+import commentRoutes from "./routes/commentroute.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
