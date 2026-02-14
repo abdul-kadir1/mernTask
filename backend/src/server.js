@@ -29,8 +29,10 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://merntask-1-xwah.onrender.com",
+    origin: "https://social-peach-three.vercel.app",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
