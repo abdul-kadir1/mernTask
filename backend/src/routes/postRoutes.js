@@ -6,7 +6,7 @@ import {
   getPostComments, 
   addComment,
   adminReply,deletePost, deleteComment
-} from "../controllers/postController.js";
+} from "../controllers/postcontroller.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/adminMiddleware.js";
  
