@@ -4,10 +4,10 @@ import {
   adminReply,
   getCommentsByPost,
   deleteComment
-} from "../controllers/commentcontroller.js";
+} from "./controllers/commentcontroller.js";
 
-import { protect } from "../middleware/authMiddleware.js";
-import { authorize } from "../middleware/adminMiddleware.js";
+import { protect } from "./middleware/authMiddleware.js";
+import { authorize } from "./middleware/adminMiddleware.js";
 
 const router = express.Router();
 router.post("/:postId", protect, addComment);

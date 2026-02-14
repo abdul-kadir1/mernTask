@@ -6,9 +6,9 @@ import {
   getPostComments, 
   addComment,
   adminReply,deletePost, deleteComment
-} from "../controllers/postController.js";
-import { protect } from "../middleware/authMiddleware.js";
-import { authorize } from "../middleware/adminMiddleware.js";
+} from "./controllers/postController.js";
+import { protect } from "./middleware/authMiddleware.js";
+import { authorize } from "./middleware/adminMiddleware.js";
 
 const router = express.Router();
 
