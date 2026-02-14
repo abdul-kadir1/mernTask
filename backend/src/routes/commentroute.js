@@ -4,7 +4,7 @@ import {
   adminReply,
   getCommentsByPost,
   deleteComment
-} from "./controllers/commentcontroller.js";
+} from "../controllers/commentcontroller.js";
 
 import { protect } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/adminMiddleware.js";
