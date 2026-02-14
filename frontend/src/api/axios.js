@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL:'http://localhost:4000/api',
+  baseURL:'https://merntask-1-xwah.onrender.com',
 });
 
 // Automatically attach JWT to headers if it exists in localStorage

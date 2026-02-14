@@ -12,7 +12,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const res = await api.post('/auth/register', formData);
-      login(res.data); // Automatically log them in after registering
+      login(res.data); // Automatically log in after registering
       navigate('/');
     } catch (err) {
       alert(err.response?.data?.message || "Registration failed");
